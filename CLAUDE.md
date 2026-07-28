@@ -10,16 +10,6 @@ This project uses **Next.js 16.2.12**, which has breaking changes vs. the Next.j
 
 Arcade Vault — a platform for playing games online and competing for the highest score. Currently a fresh `create-next-app` scaffold (App Router, TypeScript, Tailwind CSS v4) with no custom features implemented yet.
 
-## Commands
-
-```bash
-npm run dev      # start dev server
-npm run build    # production build
-npm run start    # run production build
-npm run lint     # eslint (flat config via eslint.config.mjs)
-```
-
-There is no test runner configured in this project yet.
 
 ## Architecture
 
@@ -27,6 +17,10 @@ There is no test runner configured in this project yet.
 - Path alias `@/*` maps to the project root (see `tsconfig.json`).
 - Styling: Tailwind CSS v4 via `@tailwindcss/postcss` (no `tailwind.config` — v4 uses CSS-based config in `globals.css`).
 - ESLint uses the flat-config format (`eslint.config.mjs`), extending `eslint-config-next` (core-web-vitals + typescript).
+
+## Skills
+Always use /frontend-design to design user interfaces
+
 
 ## Spec-driven workflow
 
