@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GAMES, seededScores } from "@/lib/games";
+import { getTopScores } from "@/lib/supabase/scores";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function GameDetailPage({
   params,
@@ -11,7 +13,15 @@ export default async function GameDetailPage({
   const game = GAMES.find((g) => g.id === id);
   if (!game) notFound();
 
-  const scores = seededScores(id.length * 17 + 3, 10);
+  const scores =
+    game.playable
+      ? (await getTopScores(id, 10, await createClient())).map((r, i) => ({
+          rank: i + 1,
+          name: r.player_name,
+          score: r.score,
+          date: new Date(r.created_at).toLocaleDateString("es-ES"),
+        }))
+      : seededScores(id.length * 17 + 3, 10);
 
   return (
     <div className="av-detail fade-in">
@@ -65,7 +75,7 @@ export default async function GameDetailPage({
           <h3>MEJORES PUNTUACIONES</h3>
           {scores.map((r, i) => (
             <div
-              key={r.name}
+              key={`${r.rank}-${r.name}`}
               className={"lb-row" + (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")}
             >
               <div className="rk">#{String(r.rank).padStart(2, "0")}</div>

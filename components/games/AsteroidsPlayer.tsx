@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createAsteroidsGame, type AsteroidsState } from "@/lib/games/asteroids/engine";
+import { getSession } from "@/lib/session";
+import { saveScore } from "@/lib/supabase/scores";
 
 export function AsteroidsPlayer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,12 +14,24 @@ export function AsteroidsPlayer() {
     level: 1,
     state: "playing",
   });
+  const scoreSavedRef = useRef(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
     const game = createAsteroidsGame(canvasRef.current, setGameState);
     return () => game.destroy();
   }, []);
+
+  useEffect(() => {
+    if (gameState.state === "gameover" && !scoreSavedRef.current) {
+      scoreSavedRef.current = true;
+      const playerName = getSession()?.name ?? "ANÓNIMO";
+      saveScore({ gameId: "asteroides", playerName, score: gameState.score });
+    }
+    if (gameState.state === "playing") {
+      scoreSavedRef.current = false;
+    }
+  }, [gameState.state, gameState.score]);
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-10">

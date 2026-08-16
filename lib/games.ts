@@ -12,6 +12,7 @@ export interface Game {
   color: "cyan" | "magenta" | "yellow" | "green";
   best: number;
   plays: string;
+  playable?: boolean;
 }
 
 export const GAMES: Game[] = [
@@ -91,6 +92,7 @@ export const GAMES: Game[] = [
     color: "cyan",
     best: 38700,
     plays: "8.9K",
+    playable: true,
   },
   {
     id: "ranaria",

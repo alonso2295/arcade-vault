@@ -1,18 +1,41 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { GAMES, seededScores } from "@/lib/games";
+import { GAMES, seededScores, type ScoreRow } from "@/lib/games";
 import { useSession } from "@/hooks/useSession";
+import { getTopScores } from "@/lib/supabase/scores";
+import { createClient } from "@/lib/supabase/client";
 
 export default function HallOfFamePage() {
   const [tab, setTab] = useState(GAMES[0].id);
   const { user } = useSession();
+  const [realRows, setRealRows] = useState<ScoreRow[]>([]);
 
-  const rows = useMemo(() => seededScores(tab.length * 23 + 7, 12), [tab]);
+  useEffect(() => {
+    if (!GAMES.find((g) => g.id === tab)?.playable) return;
+    let cancelled = false;
+    getTopScores(tab, 12, createClient()).then((data) => {
+      if (cancelled) return;
+      setRealRows(
+        data.map((r, i) => ({
+          rank: i + 1,
+          name: r.player_name,
+          score: r.score,
+          date: new Date(r.created_at).toLocaleDateString("es-ES"),
+        }))
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [tab]);
+
+  const mockRows = useMemo(() => seededScores(tab.length * 23 + 7, 12), [tab]);
   const game = GAMES.find((g) => g.id === tab)!;
+  const rows = game.playable ? realRows : mockRows;
   const youRank = user ? Math.floor(8 + (tab.length % 4)) : null;
-  const youScore = user ? rows[5]?.score - 2400 : null;
+  const youScore = user ? mockRows[5]?.score - 2400 : null;
 
   return (
     <div className="av-hall fade-in">
@@ -38,9 +61,9 @@ export default function HallOfFamePage() {
       <div className="podium">
         <div className="podium-slot silver">
           <div className="rank-num">02</div>
-          <div className="name">{rows[1].name}</div>
-          <div className="score">{rows[1].score.toLocaleString("es-ES")}</div>
-          <div className="date">{rows[1].date}</div>
+          <div className="name">{rows[1]?.name ?? "—"}</div>
+          <div className="score">{rows[1] ? rows[1].score.toLocaleString("es-ES") : "—"}</div>
+          <div className="date">{rows[1]?.date ?? "—"}</div>
         </div>
         <div className="podium-slot gold">
           <div className="pixel" style={{ fontSize: 9, color: "var(--gold)", letterSpacing: "0.18em" }}>
@@ -49,17 +72,17 @@ export default function HallOfFamePage() {
           <div className="rank-num" style={{ fontSize: 36, marginTop: 4 }}>
             01
           </div>
-          <div className="name">{rows[0].name}</div>
+          <div className="name">{rows[0]?.name ?? "—"}</div>
           <div className="score" style={{ fontSize: 20 }}>
-            {rows[0].score.toLocaleString("es-ES")}
+            {rows[0] ? rows[0].score.toLocaleString("es-ES") : "—"}
           </div>
-          <div className="date">{rows[0].date}</div>
+          <div className="date">{rows[0]?.date ?? "—"}</div>
         </div>
         <div className="podium-slot bronze">
           <div className="rank-num">03</div>
-          <div className="name">{rows[2].name}</div>
-          <div className="score">{rows[2].score.toLocaleString("es-ES")}</div>
-          <div className="date">{rows[2].date}</div>
+          <div className="name">{rows[2]?.name ?? "—"}</div>
+          <div className="score">{rows[2] ? rows[2].score.toLocaleString("es-ES") : "—"}</div>
+          <div className="date">{rows[2]?.date ?? "—"}</div>
         </div>
       </div>
 
