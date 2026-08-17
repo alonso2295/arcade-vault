@@ -107,6 +107,18 @@ export const GAMES: Game[] = [
     plays: "6.4K",
   },
   {
+    id: "arkanoide",
+    title: "ARKANOIDE",
+    short: "Rebota la pelota y destruye muros de bloques.",
+    long: "Controla una paleta y rebota una pelota luminosa para pulverizar 5 niveles de muros de bloques cromáticos. La pelota gana velocidad en cada nivel — no pierdas tus 3 vidas antes de completar el desafío.",
+    cat: "ARCADE",
+    cover: "cover-arkanoide",
+    color: "magenta",
+    best: 32400,
+    plays: "5.7K",
+    playable: true,
+  },
+  {
     id: "duelo-pixel",
     title: "DUELO PIXEL",
     short: "Dos paletas. Una pelota. Reflejos máximos.",
