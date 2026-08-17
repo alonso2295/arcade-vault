@@ -1,5 +1,6 @@
 import { AsteroidsPlayer } from "@/components/games/AsteroidsPlayer";
 import { CaidaPlayer } from "@/components/games/CaidaPlayer";
+import { ArkanoidePlayer } from "@/components/games/ArkanoidePlayer";
 
 export default async function GamePlayPage({
   params,
@@ -14,6 +15,10 @@ export default async function GamePlayPage({
 
   if (id === "caida") {
     return <CaidaPlayer />;
+  }
+
+  if (id === "arkanoide") {
+    return <ArkanoidePlayer />;
   }
 
   return (
